@@ -1,7 +1,7 @@
 # KalmanFilter_UIT
 UIT Project 2 source code
 
-How to use: Build and run main.cpp file as normal like you run a c++ file using your C++ compiler/IDE
+How to use: Build and run main.cpp file like you run any c++ file using your C++ compiler/IDE
 
 Code reference:
 - https://github.com/denyssene/SimpleKalmanFilter
