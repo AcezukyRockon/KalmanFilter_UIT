@@ -63,41 +63,54 @@ float SimpleKalmanFilter::getKalmanGain() { // ham lay gia tri kalman
 //------------------------------------------------------------------------------------------
 int main()
 {
-    SimpleKalmanFilter bo_loc(2, 2, 0.001);
-    float u0 = 100.0; // giá trị thực (không đổi)
-    float e; // nhiễu
-    float u; // giá trị đo được (có thêm nhiễu)
-    float u_kalman; // giá được lọc nhiễu
+  SimpleKalmanFilter bo_loc(2, 2, 0.01);
+  SimpleKalmanFilter bo_loc2(0.5, 0.5, 0.001);
+  //float u0 = 100.0; // giá trị thực (không đổi)
+  float u0, e1, e2; // inputs
+  float u, u1, u2, u0_new, u1_new; // giá trị đo được (có thêm nhiễu)
+  float u_kalman1, u_kalman2; // giá được lọc nhiễu
+  float u_temp1, u_temp2;
+
+  ofstream myfile;
+  myfile.open ("result.txt");
+
+  for (int i=0; i<2000; i++){
+    u0 = rand() % 101 + (-50);// am thanh mong muon [-50 50]
+    e1 = rand() % 201 + (-100); // nhieu dien [-100 100]
+    e2 = rand() % 21 + (-10);// nhieu am thanh khac [-10 10]
+    u1 = u0 + e1; // u0 la cai muon lay ra
+    u2 = e2 + u1; // e2 la cai muon lay ra
+    //e2 la tin hieu deu` (nhieu nen), kalman se giu lai e2 va loai u1
+
+    // Giu lai dc e2, lay u2 - u_kalman1 se ra "u1'"
+    //so sanh u1' voi u1 (theo ly thuyet u1'=u1)
+    u_kalman1 = bo_loc.updateEstimate(u2); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+
     
-    /*
-    string str = "123.4567";
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
 
-    // convert string to float
-    float num_float = stof(str);
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
 
-    // convert string to double
-    double num_double = stod(str);
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u_kalman1 = bo_loc.updateEstimate(u_kalman1); 
+    u1_new = u2 - u_kalman1; // nhieu dien + am thanh mong muon
 
-    cout<< "num_float = " << num_float << endl;
-    cout<< "num_double = " << num_double << endl;*/
+    //loc e1 va giu lai duoc am thanh ban dau
+    u0_new = bo_loc2.updateEstimate(u1_new); 
 
-    ofstream myfile;
-    myfile.open ("result-ver1.txt");
+    //u_kalman = bo_loc.updateEstimate(u_kalman); // tầng 4
+    //cout << "u_kalman[" << i << "] = " << u_kalman << endl;
+    myfile << u0 << " " << u0_new << endl;
+  }
 
-    for (int i=0; i<1000; i++){
-        e = rand() % 201 + (-100); // nhieu dien
-        e2 = ....// nhieu am thanh [-10 10]
-        u = u0 + e;
-        u2 = u + e2;
-        cout << "e[" << i << "] = " << e << endl;
-        u_kalman = bo_loc.updateEstimate(u); // tầng 1
-        u_kalman = bo_loc.updateEstimate(u_kalman); // tầng 2
-        u_kalman = bo_loc.updateEstimate(u_kalman); // tầng 3
-        u_kalman = bo_loc.updateEstimate(u_kalman); // tầng 4
-        cout << "u_kalman[" << i << "] = " << u_kalman << endl;
-        myfile << u << " " << u_kalman << endl;
-    }
-
-    myfile.close();
-    return 0;
+  myfile.close();
+  return 0;
 }
