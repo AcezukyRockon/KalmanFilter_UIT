@@ -1,3 +1,4 @@
+% Add or remove "%" to use portion of codes
 % load handel.mat
 
 % read double value and write to wav file
@@ -10,6 +11,7 @@
 % read wav file and output to sample data to "handel" and sample
 % rate to "Fs"
  [handel,Fs] = audioread('handel.wav');
+  writematrix(handel,'matrix_output.txt'); %write matrix data to a file
  
 % play the sound with "double" values
  sound(handle,Fs);
