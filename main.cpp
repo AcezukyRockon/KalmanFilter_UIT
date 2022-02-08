@@ -64,7 +64,7 @@ float SimpleKalmanFilter::getKalmanGain() { // ham lay gia tri kalman
 int main()
 {
   //SimpleKalmanFilter bo_loc(2, 2, 0.01); // nguon arduino
-  SimpleKalmanFilter bo_loc2(2, 2, 1);
+  SimpleKalmanFilter bo_loc2(0.0000001, 2, 0.1);
   float u, u_new;
   float u_kalman; 
   string mytext;
@@ -77,6 +77,9 @@ int main()
   while(getline (myfile, mytext)){
     u = stof(mytext); // input co nhieu nen
     u_kalman = bo_loc2.updateEstimate(u); // u_kalman chinh la nhieu nen
+    u_kalman = bo_loc2.updateEstimate(u_kalman); // u_kalman chinh la nhieu nen
+    u_kalman = bo_loc2.updateEstimate(u_kalman); // u_kalman chinh la nhieu nen
+    u_kalman = bo_loc2.updateEstimate(u_kalman); // u_kalman chinh la nhieu nen
     // u_kalman1 = bo_loc2.updateEstimate(u_kalman1); 
     u_new = u - u_kalman; // output = input ban dau - nhieu
     myfile2 << u_new << endl;
