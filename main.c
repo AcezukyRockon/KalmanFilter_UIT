@@ -25,12 +25,9 @@ int main() {
     float x_temp_est;
     float x_est;
     float z_measured; //the 'noisy' value we measured
-    float z_real = 0.5; //the ideal value we wish to measure
     float minus;
     
-    srand(0);
-    
-    //initialize with a measurement
+     //initialize with a measurement
     x_est_last = 0;
 
     fptr = fopen("input.txt","r");
