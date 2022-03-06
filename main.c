@@ -7,10 +7,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-double frand() {
-    return 2*((rand()/(double)RAND_MAX) - 0.5);
-}
-
 int main() {
     int i;
     FILE *fptr;
@@ -30,7 +26,7 @@ int main() {
     float x_est;
     float z_measured; //the 'noisy' value we measured
     float z_real = 0.5; //the ideal value we wish to measure
-    float minus, result;
+    float minus;
     
     srand(0);
     
