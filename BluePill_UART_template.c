@@ -1,5 +1,3 @@
-// Source: https://khuenguyencreator.com/lap-trinh-stm32-voi-giao-thuc-uart/
-
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -75,27 +73,20 @@ float x_est;
 float z_measured; //the 'noisy' value we measured
 float minus;
 
-char* data1 = "Hello World\n";
-uint8_t u8_RxBuff[20]; //buffer luu chuoi nhan duoc
-uint8_t u8_RxData; // luu byte nhan duoc
-uint8_t u8_TxBuff[20] = "Hello Anh em !!!!"; // buffer truyen di
-uint8_t _rxIndex; // con tro cua RxBuff
-uint16_t Tx_Flag;
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	UNUSED(huart);
-	if(huart->Instance == USART1){
-		if(u8_RxData != 13){ // NULL ascii
-			u8_RxBuff[_rxIndex++] = u8_RxData; // them du lieu vao buffer
-		}
-		else if(u8_RxData == 13){
-			_rxIndex = 0; // xoa con tro du lieu
-			Tx_Flag = 1;
-		}
-		HAL_UART_Receive_IT(&huart1, &u8_RxData, 1);
-	}
-}
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+//{
+//	UNUSED(huart);
+//	if(huart->Instance == USART1){
+//		if(u8_RxData != 13){ // NULL ascii
+//			u8_RxBuff[_rxIndex++] = u8_RxData; // them du lieu vao buffer
+//		}
+//		else if(u8_RxData == 13){
+//			_rxIndex = 0; // xoa con tro du lieu
+//			Tx_Flag = 1;
+//		}
+//		HAL_UART_Receive_IT(&huart1, &u8_RxData, 1);
+//	}
+//}
 /* USER CODE END 0 */
 
 /**
@@ -130,8 +121,6 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   x_est_last = 1000;
-  HAL_UART_Transmit(&huart1, u8_TxBuff, sizeof(u8_TxBuff), 100);
-  HAL_UART_Receive_IT(&huart1, &u8_RxData, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,13 +128,9 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  if (Tx_Flag) {
-		  for (int i = 0; i < 20; i++) { // copy du lieu tu Rx sang Tx
-			  u8_TxBuff[i] = u8_RxBuff[i];
-		  }
-		  HAL_UART_Transmit(&huart1, u8_TxBuff, sizeof(u8_TxBuff), 100);
-		  Tx_Flag = 0;
-	  }
+	  char str[] = "Hello World \r\n";
+	  HAL_UART_Transmit(&huart1, (uint8_t *)&str, sizeof(str), 1000);
+	  HAL_Delay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -166,11 +151,7 @@ void SystemClock_Config(void)
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL2;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -179,7 +160,7 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
