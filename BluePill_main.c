@@ -1,280 +1,606 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
+  * @file    stm32f1xx_hal.c
+  * @author  MCD Application Team
+  * @brief   HAL module driver.
+  *          This is the common part of the HAL initialization
+  *
+  @verbatim
+  ==============================================================================
+                     ##### How to use this driver #####
+  ==============================================================================
+    [..]
+    The common HAL driver contains a set of generic and common APIs that can be
+    used by the PPP peripheral drivers and the user to start using the HAL.
+    [..]
+    The HAL contains two APIs' categories:
+         (+) Common HAL APIs
+         (+) Services HAL APIs
+
+  @endverbatim
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include "stm32f1xx_hal.h"
 
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
+/** @addtogroup STM32F1xx_HAL_Driver
+  * @{
+  */
 
-/* USER CODE END Includes */
+/** @defgroup HAL HAL
+  * @brief HAL module driver.
+  * @{
+  */
+
+#ifdef HAL_MODULE_ENABLED
 
 /* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-/* USER CODE END PD */
+
+/** @defgroup HAL_Private_Constants HAL Private Constants
+  * @{
+  */
+/**
+ * @brief STM32F1xx HAL Driver version number V1.1.8
+   */
+#define __STM32F1xx_HAL_VERSION_MAIN   (0x01U) /*!< [31:24] main version */
+#define __STM32F1xx_HAL_VERSION_SUB1   (0x01U) /*!< [23:16] sub1 version */
+#define __STM32F1xx_HAL_VERSION_SUB2   (0x08U) /*!< [15:8]  sub2 version */
+#define __STM32F1xx_HAL_VERSION_RC     (0x00U) /*!< [7:0]  release candidate */
+#define __STM32F1xx_HAL_VERSION         ((__STM32F1xx_HAL_VERSION_MAIN << 24)\
+                                        |(__STM32F1xx_HAL_VERSION_SUB1 << 16)\
+                                        |(__STM32F1xx_HAL_VERSION_SUB2 << 8 )\
+                                        |(__STM32F1xx_HAL_VERSION_RC))
+
+#define IDCODE_DEVID_MASK    0x00000FFFU
+
+/**
+  * @}
+  */
 
 /* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
 /* Private variables ---------------------------------------------------------*/
-ADC_HandleTypeDef hadc1;
 
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
+/** @defgroup HAL_Private_Variables HAL Private Variables
+  * @{
+  */
+__IO uint32_t uwTick;
+uint32_t uwTickPrio   = (1UL << __NVIC_PRIO_BITS); /* Invalid PRIO */
+HAL_TickFreqTypeDef uwTickFreq = HAL_TICK_FREQ_DEFAULT;  /* 1KHz */
+/**
+  * @}
+  */
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_ADC1_Init(void);
-/* USER CODE BEGIN PFP */
+/* Exported functions ---------------------------------------------------------*/
 
-/* USER CODE END PFP */
+/** @defgroup HAL_Exported_Functions HAL Exported Functions
+  * @{
+  */
 
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-float analog_value;
-float x_est_last = 0;
-float P_last = 0;
-//the noise in the system
-float Q = 0.022;
-float R = 0.617;
-
-float K;
-float P;
-float P_temp;
-float x_temp_est;
-float x_est;
-float z_measured; //the 'noisy' value we measured
-float minus;
-/* USER CODE END 0 */
+/** @defgroup HAL_Exported_Functions_Group1 Initialization and de-initialization Functions
+ *  @brief    Initialization and de-initialization functions
+ *
+@verbatim
+ ===============================================================================
+              ##### Initialization and de-initialization functions #####
+ ===============================================================================
+   [..]  This section provides functions allowing to:
+      (+) Initializes the Flash interface, the NVIC allocation and initial clock
+          configuration. It initializes the systick also when timeout is needed
+          and the backup domain when enabled.
+      (+) de-Initializes common part of the HAL.
+      (+) Configure The time base source to have 1ms time base with a dedicated
+          Tick interrupt priority.
+        (++) SysTick timer is used by default as source of time base, but user
+             can eventually implement his proper time base source (a general purpose
+             timer for example or other time source), keeping in mind that Time base
+             duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
+             handled in milliseconds basis.
+        (++) Time base configuration function (HAL_InitTick ()) is called automatically
+             at the beginning of the program after reset by HAL_Init() or at any time
+             when clock is configured, by HAL_RCC_ClockConfig().
+        (++) Source of time base is configured  to generate interrupts at regular
+             time intervals. Care must be taken if HAL_Delay() is called from a
+             peripheral ISR process, the Tick interrupt line must have higher priority
+            (numerically lower) than the peripheral interrupt. Otherwise the caller
+            ISR process will be blocked.
+       (++) functions affecting time base configurations are declared as __weak
+             to make  override possible  in case of other  implementations in user file.
+@endverbatim
+  * @{
+  */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
+  * @brief  This function is used to initialize the HAL Library; it must be the first
+  *         instruction to be executed in the main program (before to call any other
+  *         HAL function), it performs the following:
+  *           Configure the Flash prefetch.
+  *           Configures the SysTick to generate an interrupt each 1 millisecond,
+  *           which is clocked by the HSI (at this stage, the clock is not yet
+  *           configured and thus the system is running from the internal HSI at 16 MHz).
+  *           Set NVIC Group Priority to 4.
+  *           Calls the HAL_MspInit() callback function defined in user file
+  *           "stm32f1xx_hal_msp.c" to do the global low level hardware initialization
+  *
+  * @note   SysTick is used as time base for the HAL_Delay() function, the application
+  *         need to ensure that the SysTick time base is always set to 1 millisecond
+  *         to have correct HAL operation.
+  * @retval HAL status
   */
-int main(void)
+HAL_StatusTypeDef HAL_Init(void)
 {
-  /* USER CODE BEGIN 1 */
+  /* Configure Flash prefetch */
+#if (PREFETCH_ENABLE != 0)
+#if defined(STM32F101x6) || defined(STM32F101xB) || defined(STM32F101xE) || defined(STM32F101xG) || \
+    defined(STM32F102x6) || defined(STM32F102xB) || \
+    defined(STM32F103x6) || defined(STM32F103xB) || defined(STM32F103xE) || defined(STM32F103xG) || \
+    defined(STM32F105xC) || defined(STM32F107xC)
 
-  /* USER CODE END 1 */
+  /* Prefetch buffer is not available on value line devices */
+  __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+#endif
+#endif /* PREFETCH_ENABLE */
 
-  /* MCU Configuration--------------------------------------------------------*/
+  /* Set Interrupt Group Priority */
+  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  /* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
+  HAL_InitTick(TICK_INT_PRIORITY);
 
-  /* USER CODE BEGIN Init */
+  /* Init the low level hardware */
+  HAL_MspInit();
 
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  /* USER CODE BEGIN 2 */
-  x_est_last = 1000;
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-	  HAL_ADC_Start(&hadc1);
-	  analog_value = HAL_ADC_GetValue(&hadc1);
-
-      //do a prediction
-      x_temp_est = x_est_last;
-      P_temp = P_last + Q;
-      //calculate the Kalman gain
-      K = P_temp * (1.0/(P_temp + R));
-      //measure
-      z_measured = analog_value;  //the real measurement plus noise
-      //correct
-      x_est = x_temp_est + K * (z_measured - x_temp_est); // x_est = nhieu on thap
-      P = (1- K) * P_temp;
-      //we have our new system
-
-      minus = z_measured - x_est;
-
-      //update our last's
-      P_last = P;
-      x_est_last = x_est;
-	  //HAL_Delay(50);
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+  /* Return function status */
+  return HAL_OK;
 }
 
 /**
-  * @brief System Clock Configuration
+  * @brief This function de-Initializes common part of the HAL and stops the systick.
+  *        of time base.
+  * @note This function is optional.
+  * @retval HAL status
+  */
+HAL_StatusTypeDef HAL_DeInit(void)
+{
+  /* Reset of all peripherals */
+  __HAL_RCC_APB1_FORCE_RESET();
+  __HAL_RCC_APB1_RELEASE_RESET();
+
+  __HAL_RCC_APB2_FORCE_RESET();
+  __HAL_RCC_APB2_RELEASE_RESET();
+
+#if defined(STM32F105xC) || defined(STM32F107xC)
+  __HAL_RCC_AHB_FORCE_RESET();
+  __HAL_RCC_AHB_RELEASE_RESET();
+#endif
+
+  /* De-Init the low level hardware */
+  HAL_MspDeInit();
+
+  /* Return function status */
+  return HAL_OK;
+}
+
+/**
+  * @brief  Initialize the MSP.
   * @retval None
   */
-void SystemClock_Config(void)
+__weak void HAL_MspInit(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_MspInit could be implemented in the user file
+   */
+}
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
+/**
+  * @brief  DeInitializes the MSP.
+  * @retval None
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+__weak void HAL_MspDeInit(void)
+{
+  /* NOTE : This function should not be modified, when the callback is needed,
+            the HAL_MspDeInit could be implemented in the user file
+   */
+}
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+/**
+  * @brief This function configures the source of the time base.
+  *        The time source is configured  to have 1ms time base with a dedicated
+  *        Tick interrupt priority.
+  * @note This function is called  automatically at the beginning of program after
+  *       reset by HAL_Init() or at any time when clock is reconfigured  by HAL_RCC_ClockConfig().
+  * @note In the default implementation, SysTick timer is the source of time base.
+  *       It is used to generate interrupts at regular time intervals.
+  *       Care must be taken if HAL_Delay() is called from a peripheral ISR process,
+  *       The SysTick interrupt must have higher priority (numerically lower)
+  *       than the peripheral interrupt. Otherwise the caller ISR process will be blocked.
+  *       The function is declared as __weak  to be overwritten  in case of other
+  *       implementation  in user file.
+  * @param TickPriority Tick interrupt priority.
+  * @retval HAL status
+  */
+__weak HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
+{
+  /* Configure the SysTick to have interrupt in 1ms time basis*/
+  if (HAL_SYSTICK_Config(SystemCoreClock / (1000U / uwTickFreq)) > 0U)
   {
-    Error_Handler();
+    return HAL_ERROR;
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
-  PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV2;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+
+  /* Configure the SysTick IRQ priority */
+  if (TickPriority < (1UL << __NVIC_PRIO_BITS))
   {
-    Error_Handler();
+    HAL_NVIC_SetPriority(SysTick_IRQn, TickPriority, 0U);
+    uwTickPrio = TickPriority;
+  }
+  else
+  {
+    return HAL_ERROR;
+  }
+
+  /* Return function status */
+  return HAL_OK;
+}
+
+/**
+  * @}
+  */
+
+/** @defgroup HAL_Exported_Functions_Group2 HAL Control functions
+  *  @brief    HAL Control functions
+  *
+@verbatim
+ ===============================================================================
+                      ##### HAL Control functions #####
+ ===============================================================================
+    [..]  This section provides functions allowing to:
+      (+) Provide a tick value in millisecond
+      (+) Provide a blocking delay in millisecond
+      (+) Suspend the time base source interrupt
+      (+) Resume the time base source interrupt
+      (+) Get the HAL API driver version
+      (+) Get the device identifier
+      (+) Get the device revision identifier
+      (+) Enable/Disable Debug module during SLEEP mode
+      (+) Enable/Disable Debug module during STOP mode
+      (+) Enable/Disable Debug module during STANDBY mode
+
+@endverbatim
+  * @{
+  */
+
+/**
+  * @brief This function is called to increment  a global variable "uwTick"
+  *        used as application time base.
+  * @note In the default implementation, this variable is incremented each 1ms
+  *       in SysTick ISR.
+  * @note This function is declared as __weak to be overwritten in case of other
+  *      implementations in user file.
+  * @retval None
+  */
+__weak void HAL_IncTick(void)
+{
+  uwTick += uwTickFreq;
+}
+
+/**
+  * @brief Provides a tick value in millisecond.
+  * @note  This function is declared as __weak to be overwritten in case of other
+  *       implementations in user file.
+  * @retval tick value
+  */
+__weak uint32_t HAL_GetTick(void)
+{
+  return uwTick;
+}
+
+/**
+  * @brief This function returns a tick priority.
+  * @retval tick priority
+  */
+uint32_t HAL_GetTickPrio(void)
+{
+  return uwTickPrio;
+}
+
+/**
+  * @brief Set new tick Freq.
+  * @retval status
+  */
+HAL_StatusTypeDef HAL_SetTickFreq(HAL_TickFreqTypeDef Freq)
+{
+  HAL_StatusTypeDef status  = HAL_OK;
+  HAL_TickFreqTypeDef prevTickFreq;
+
+  assert_param(IS_TICKFREQ(Freq));
+
+  if (uwTickFreq != Freq)
+  {
+    /* Back up uwTickFreq frequency */
+    prevTickFreq = uwTickFreq;
+
+    /* Update uwTickFreq global variable used by HAL_InitTick() */
+    uwTickFreq = Freq;
+
+    /* Apply the new tick Freq  */
+    status = HAL_InitTick(uwTickPrio);
+
+    if (status != HAL_OK)
+    {
+      /* Restore previous tick frequency */
+      uwTickFreq = prevTickFreq;
+    }
+  }
+
+  return status;
+}
+
+/**
+  * @brief Return tick frequency.
+  * @retval tick period in Hz
+  */
+HAL_TickFreqTypeDef HAL_GetTickFreq(void)
+{
+  return uwTickFreq;
+}
+
+/**
+  * @brief This function provides minimum delay (in milliseconds) based
+  *        on variable incremented.
+  * @note In the default implementation , SysTick timer is the source of time base.
+  *       It is used to generate interrupts at regular time intervals where uwTick
+  *       is incremented.
+  * @note This function is declared as __weak to be overwritten in case of other
+  *       implementations in user file.
+  * @param Delay specifies the delay time length, in milliseconds.
+  * @retval None
+  */
+__weak void HAL_Delay(uint32_t Delay)
+{
+  uint32_t tickstart = HAL_GetTick();
+  uint32_t wait = Delay;
+
+  /* Add a freq to guarantee minimum wait */
+  if (wait < HAL_MAX_DELAY)
+  {
+    wait += (uint32_t)(uwTickFreq);
+  }
+
+  while ((HAL_GetTick() - tickstart) < wait)
+  {
   }
 }
 
 /**
-  * @brief ADC1 Initialization Function
-  * @param None
+  * @brief Suspend Tick increment.
+  * @note In the default implementation , SysTick timer is the source of time base. It is
+  *       used to generate interrupts at regular time intervals. Once HAL_SuspendTick()
+  *       is called, the SysTick interrupt will be disabled and so Tick increment
+  *       is suspended.
+  * @note This function is declared as __weak to be overwritten in case of other
+  *       implementations in user file.
   * @retval None
   */
-static void MX_ADC1_Init(void)
+__weak void HAL_SuspendTick(void)
 {
-
-  /* USER CODE BEGIN ADC1_Init 0 */
-
-  /* USER CODE END ADC1_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN ADC1_Init 1 */
-
-  /* USER CODE END ADC1_Init 1 */
-  /** Common config
-  */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure Regular Channel
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_1CYCLE_5;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
-
+  /* Disable SysTick Interrupt */
+  CLEAR_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 }
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
+  * @brief Resume Tick increment.
+  * @note In the default implementation , SysTick timer is the source of time base. It is
+  *       used to generate interrupts at regular time intervals. Once HAL_ResumeTick()
+  *       is called, the SysTick interrupt will be enabled and so Tick increment
+  *       is resumed.
+  * @note This function is declared as __weak to be overwritten in case of other
+  *       implementations in user file.
   * @retval None
   */
-static void MX_GPIO_Init(void)
+__weak void HAL_ResumeTick(void)
 {
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-
+  /* Enable SysTick Interrupt */
+  SET_BIT(SysTick->CTRL, SysTick_CTRL_TICKINT_Msk);
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
+  * @brief  Returns the HAL revision
+  * @retval version 0xXYZR (8bits for each decimal, R for RC)
   */
-void Error_Handler(void)
+uint32_t HAL_GetHalVersion(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
+  return __STM32F1xx_HAL_VERSION;
 }
 
-#ifdef  USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
+  * @brief Returns the device revision identifier.
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * @retval Device revision identifier
+  */
+uint32_t HAL_GetREVID(void)
+{
+  return ((DBGMCU->IDCODE) >> DBGMCU_IDCODE_REV_ID_Pos);
+}
+
+/**
+  * @brief  Returns the device identifier.
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * @retval Device identifier
+  */
+uint32_t HAL_GetDEVID(void)
+{
+  return ((DBGMCU->IDCODE) & IDCODE_DEVID_MASK);
+}
+
+/**
+  * @brief  Returns first word of the unique device identifier (UID based on 96 bits)
+  * @retval Device identifier
+  */
+uint32_t HAL_GetUIDw0(void)
+{
+   return(READ_REG(*((uint32_t *)UID_BASE)));
+}
+
+/**
+  * @brief  Returns second word of the unique device identifier (UID based on 96 bits)
+  * @retval Device identifier
+  */
+uint32_t HAL_GetUIDw1(void)
+{
+   return(READ_REG(*((uint32_t *)(UID_BASE + 4U))));
+}
+
+/**
+  * @brief  Returns third word of the unique device identifier (UID based on 96 bits)
+  * @retval Device identifier
+  */
+uint32_t HAL_GetUIDw2(void)
+{
+   return(READ_REG(*((uint32_t *)(UID_BASE + 8U))));
+}
+
+/**
+  * @brief  Enable the Debug Module during SLEEP mode
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
+void HAL_DBGMCU_EnableDBGSleepMode(void)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+  SET_BIT(DBGMCU->CR, DBGMCU_CR_DBG_SLEEP);
 }
-#endif /* USE_FULL_ASSERT */
 
+/**
+  * @brief  Disable the Debug Module during SLEEP mode
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * @retval None
+  */
+void HAL_DBGMCU_DisableDBGSleepMode(void)
+{
+  CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_SLEEP);
+}
+
+/**
+  * @brief  Enable the Debug Module during STOP mode
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * Note: On all STM32F1 devices:
+  *       If the system tick timer interrupt is enabled during the Stop mode
+  *       debug (DBG_STOP bit set in the DBGMCU_CR register ), it will wakeup
+  *       the system from Stop mode.
+  *       Workaround: To debug the Stop mode, disable the system tick timer
+  *       interrupt.
+  *       Refer to errata sheet of these devices for more details.
+  * Note: On all STM32F1 devices:
+  *       If the system tick timer interrupt is enabled during the Stop mode
+  *       debug (DBG_STOP bit set in the DBGMCU_CR register ), it will wakeup
+  *       the system from Stop mode.
+  *       Workaround: To debug the Stop mode, disable the system tick timer
+  *       interrupt.
+  *       Refer to errata sheet of these devices for more details.
+  * @retval None
+  */
+void HAL_DBGMCU_EnableDBGStopMode(void)
+{
+  SET_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STOP);
+}
+
+/**
+  * @brief  Disable the Debug Module during STOP mode
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * @retval None
+  */
+void HAL_DBGMCU_DisableDBGStopMode(void)
+{
+  CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STOP);
+}
+
+/**
+  * @brief  Enable the Debug Module during STANDBY mode
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * @retval None
+  */
+void HAL_DBGMCU_EnableDBGStandbyMode(void)
+{
+  SET_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STANDBY);
+}
+
+/**
+  * @brief  Disable the Debug Module during STANDBY mode
+  * Note: On devices STM32F10xx8 and STM32F10xxB,
+  *                  STM32F101xC/D/E and STM32F103xC/D/E,
+  *                  STM32F101xF/G and STM32F103xF/G
+  *                  STM32F10xx4 and STM32F10xx6
+  *       Debug registers DBGMCU_IDCODE and DBGMCU_CR are accessible only in
+  *       debug mode (not accessible by the user software in normal mode).
+  *       Refer to errata sheet of these devices for more details.
+  * @retval None
+  */
+void HAL_DBGMCU_DisableDBGStandbyMode(void)
+{
+  CLEAR_BIT(DBGMCU->CR, DBGMCU_CR_DBG_STANDBY);
+}
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+#endif /* HAL_MODULE_ENABLED */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
