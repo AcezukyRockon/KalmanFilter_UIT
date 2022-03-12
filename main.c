@@ -47,11 +47,11 @@ int main() {
         //we have our new system
 
         minus = z_measured - x_est;
-        fprintf(fptr2, "%f\n", minus);
+        fprintf(fptr2, "%f\n", x_est);
         
         //update our last's
         P_last = P;
-        x_est_last = minus;
+        x_est_last = x_est;
     }
    
     fclose(fptr2);
