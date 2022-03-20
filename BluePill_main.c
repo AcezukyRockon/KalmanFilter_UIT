@@ -71,6 +71,10 @@ float x_temp_est;
 float x_est;
 float z_measured; //the 'noisy' value we measured
 float minus;
+
+float max = 0;
+float min = 0;
+float avg = 0;
 /* USER CODE END 0 */
 
 /**
@@ -123,12 +127,15 @@ int main(void)
       //calculate the Kalman gain
       K = P_temp * (1.0/(P_temp + R));
       //measure
-      z_measured = analog_value;  //the real measurement plus noise
+      z_measured = analog_value/1500.0 - 1.0;  //the real measurement plus noise in PCM format
+      if (max < z_measured) max = z_measured;
+      if (min > z_measured) min = z_measured;
+      avg = (max + min)/2;
       //correct
       x_est = x_temp_est + K * (z_measured - x_temp_est); // x_est = nhieu on thap
       P = (1- K) * P_temp;
       //we have our new system
-      minus = z_measured - x_est + 1500;
+      minus = z_measured - x_est;
       if (i < 200){
     	  result_z[i] = z_measured;
     	  result_x[i] = minus;
@@ -138,7 +145,7 @@ int main(void)
       //update our last's
       P_last = P;
       x_est_last = x_est;
-	  HAL_Delay(50);
+	  //HAL_Delay(50);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
