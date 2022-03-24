@@ -82,6 +82,7 @@ int i = 0;
 char buffer[32] = {0};
 uint8_t count = 0;
 float temp = 34.6;
+// UART transmit function
 void uprintf(char *str){
 	HAL_UART_Transmit(&huart1, (uint8_t *) str, strlen(str), 100);
 }
@@ -128,40 +129,44 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	    /* USER CODE END WHILE */
-		  HAL_ADC_Start(&hadc1);
-		  analog_value = HAL_ADC_GetValue(&hadc1);
+    /* USER CODE END WHILE */
+      // Start ADC and get adc value from PA0
+      HAL_ADC_Start(&hadc1);
+      analog_value = HAL_ADC_GetValue(&hadc1);
 
-	      //do a prediction
-	      x_temp_est = x_est_last;
-	      P_temp = P_last + Q;
-	      //calculate the Kalman gain
-	      K = P_temp * (1.0/(P_temp + R));
-	      //measure
-	      z_measured = analog_value/1500.0 - 1.0;  //the real measurement plus noise in PCM format
-	      if (max < z_measured) max = z_measured;
-	      if (min > z_measured) min = z_measured;
-	      avg = (max + min)/2;
-	      //correct
-	      x_est = x_temp_est + K * (z_measured - x_temp_est); // x_est = nhieu on thap
-	      P = (1- K) * P_temp;
-	      //we have our new system
-	      minus = z_measured - x_est;
-		  //sprintf(buffer, "%f %f %f\n", z_measured, x_est, minus);
-	      sprintf(buffer, "%f\n", minus);
-		  uprintf(buffer);
-	      if (i < 100){
-	    	  result_z[i] = z_measured;
-	    	  result_x[i] = minus;
-	    	  //i++;
-	      }
+      //do a prediction
+      x_temp_est = x_est_last;
+      P_temp = P_last + Q;
+      //calculate the Kalman gain
+      K = P_temp * (1.0/(P_temp + R));
+	  
+      //measure
+      z_measured = analog_value/1500.0 - 1.0;  // the real measurement plus noise in PCM format (linear transformation)
+      if (max < z_measured) max = z_measured;  // debug only
+      if (min > z_measured) min = z_measured;  // debug only
+      avg = (max + min)/2;		       // debug only
+	  
+      //correct
+      x_est = x_temp_est + K * (z_measured - x_temp_est); // x_est = nhieu on thap
+      P = (1- K) * P_temp;
+	  
+      //we have our new system
+      minus = z_measured - x_est;
+      //sprintf(buffer, "%f %f %f\n", z_measured, x_est, minus);
+      sprintf(buffer, "%f\n", minus);		// Instead of printing on console, it store output on char buffer which are specified in sprintf
+      uprintf(buffer);				// Call UART Transmit function using char buffer to send UART data to Raspberry Pi
+      if (i < 100){  // only for debug inside STM32 IDE
+	  result_z[i] = z_measured;
+	  result_x[i] = minus;
+	  //i++;
+      }
 
-	      //update our last's
-	      P_last = P;
-	      x_est_last = x_est;
-	      i++;
-	      HAL_Delay(50);
-	    /* USER CODE BEGIN 3 */
+      //update our last's
+      P_last = P;
+      x_est_last = x_est;
+      i++;
+      HAL_Delay(50);	// delay to view result without destroying COM port
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
