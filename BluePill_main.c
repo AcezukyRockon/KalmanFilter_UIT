@@ -18,6 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
+#include "usart.h"
+#include "gpio.h"
+#include <stdio.h>
+#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -39,7 +44,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- ADC_HandleTypeDef hadc1;
 
 /* USER CODE BEGIN PV */
 
@@ -47,8 +51,6 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -76,6 +78,13 @@ float max = 0;
 float min = 0;
 float avg = 0;
 int i = 0;
+
+char buffer[32] = {0};
+uint8_t count = 0;
+float temp = 34.6;
+void uprintf(char *str){
+	HAL_UART_Transmit(&huart1, (uint8_t *) str, strlen(str), 100);
+}
 /* USER CODE END 0 */
 
 /**
@@ -107,6 +116,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   x_est_last = 0;
   P_last = 0;
@@ -118,37 +128,40 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
-	  HAL_ADC_Start(&hadc1);
-	  analog_value = HAL_ADC_GetValue(&hadc1);
+	    /* USER CODE END WHILE */
+		  HAL_ADC_Start(&hadc1);
+		  analog_value = HAL_ADC_GetValue(&hadc1);
 
-      //do a prediction
-      x_temp_est = x_est_last;
-      P_temp = P_last + Q;
-      //calculate the Kalman gain
-      K = P_temp * (1.0/(P_temp + R));
-      //measure
-      z_measured = analog_value/1500.0 - 1.0;  //the real measurement plus noise in PCM format
-      if (max < z_measured) max = z_measured;
-      if (min > z_measured) min = z_measured;
-      avg = (max + min)/2;
-      //correct
-      x_est = x_temp_est + K * (z_measured - x_temp_est); // x_est = nhieu on thap
-      P = (1- K) * P_temp;
-      //we have our new system
-      minus = z_measured - x_est;
-      if (i < 100){
-    	  result_z[i] = z_measured;
-    	  result_x[i] = minus;
-    	  //i++;
-      }
+	      //do a prediction
+	      x_temp_est = x_est_last;
+	      P_temp = P_last + Q;
+	      //calculate the Kalman gain
+	      K = P_temp * (1.0/(P_temp + R));
+	      //measure
+	      z_measured = analog_value/1500.0 - 1.0;  //the real measurement plus noise in PCM format
+	      if (max < z_measured) max = z_measured;
+	      if (min > z_measured) min = z_measured;
+	      avg = (max + min)/2;
+	      //correct
+	      x_est = x_temp_est + K * (z_measured - x_temp_est); // x_est = nhieu on thap
+	      P = (1- K) * P_temp;
+	      //we have our new system
+	      minus = z_measured - x_est;
+		  //sprintf(buffer, "%f %f %f\n", z_measured, x_est, minus);
+	      sprintf(buffer, "%f\n", minus);
+		  uprintf(buffer);
+	      if (i < 100){
+	    	  result_z[i] = z_measured;
+	    	  result_x[i] = minus;
+	    	  //i++;
+	      }
 
-      //update our last's
-      P_last = P;
-      x_est_last = x_est;
-      i++;
-	  //HAL_Delay(50);
-    /* USER CODE BEGIN 3 */
+	      //update our last's
+	      P_last = P;
+	      x_est_last = x_est;
+	      i++;
+	      HAL_Delay(50);
+	    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
@@ -168,7 +181,11 @@ void SystemClock_Config(void)
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -178,12 +195,12 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
@@ -195,70 +212,30 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief ADC1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ADC1_Init(void)
-{
-
-  /* USER CODE BEGIN ADC1_Init 0 */
-
-  /* USER CODE END ADC1_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
-
-  /* USER CODE BEGIN ADC1_Init 1 */
-
-  /* USER CODE END ADC1_Init 1 */
-
-  /** Common config
-  */
-  hadc1.Instance = ADC1;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.DiscontinuousConvMode = DISABLE;
-  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
-  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 1;
-  if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Regular Channel
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ADC1_Init 2 */
-
-  /* USER CODE END ADC1_Init 2 */
-
-}
-
-/**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-
-}
-
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM1 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM1) {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
