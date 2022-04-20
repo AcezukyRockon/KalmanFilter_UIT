@@ -1,5 +1,6 @@
 # install matplotlib: https://matplotlib.org/stable/users/getting_started/index.html
 # source: https://stackoverflow.com/questions/38532298/how-can-you-plot-data-from-a-txt-file-using-matplotlib
+# plot multiple data: https://stackoverflow.com/questions/25524319/plotting-three-data-sets-on-a-single-plot-using-matplotlib
 
 import numpy  as np
 import matplotlib.pyplot as plt
