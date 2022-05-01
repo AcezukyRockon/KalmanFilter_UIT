@@ -1,0 +1,550 @@
+pi@raspberrypi:~ $ sudo apt update
+Hit:1 http://archive.raspberrypi.org/debian bullseye InRelease                 
+Hit:2 http://raspbian.raspberrypi.org/raspbian bullseye InRelease
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+29 packages can be upgraded. Run 'apt list --upgradable' to see them.
+pi@raspberrypi:~ $ sudo apt install sqlite3
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libfuse2
+Use 'sudo apt autoremove' to remove it.
+Suggested packages:
+  sqlite3-doc
+The following NEW packages will be installed:
+  sqlite3
+0 upgraded, 1 newly installed, 0 to remove and 29 not upgraded.
+Need to get 1,054 kB of archives.
+After this operation, 2,729 kB of additional disk space will be used.
+Get:1 https://rpi.vietidc.com/raspbian bullseye/main armhf sqlite3 armhf 3.34.1-3 [1,054 kB]
+Fetched 1,054 kB in 2s (627 kB/s) 
+Selecting previously unselected package sqlite3.
+(Reading database ... 101501 files and directories currently installed.)
+Preparing to unpack .../sqlite3_3.34.1-3_armhf.deb ...
+Unpacking sqlite3 (3.34.1-3) ...
+Setting up sqlite3 (3.34.1-3) ...
+Processing triggers for man-db (2.9.4-2) ...
+pi@raspberrypi:~ $ python -m pip
+
+Usage:   
+  /usr/bin/python -m pip <command> [options]
+
+Commands:
+  install                     Install packages.
+  download                    Download packages.
+  uninstall                   Uninstall packages.
+  freeze                      Output installed packages in requirements format.
+  list                        List installed packages.
+  show                        Show information about installed packages.
+  check                       Verify installed packages have compatible dependencies.
+  config                      Manage local and global configuration.
+  search                      Search PyPI for packages.
+  cache                       Inspect and manage pip's wheel cache.
+  wheel                       Build wheels from your requirements.
+  hash                        Compute hashes of package archives.
+  completion                  A helper command used for command completion.
+  debug                       Show information useful for debugging.
+  help                        Show help for commands.
+
+General Options:
+  -h, --help                  Show help.
+  --isolated                  Run pip in an isolated mode, ignoring
+                              environment variables and user configuration.
+  -v, --verbose               Give more output. Option is additive, and can be
+                              used up to 3 times.
+  -V, --version               Show version and exit.
+  -q, --quiet                 Give less output. Option is additive, and can be
+                              used up to 3 times (corresponding to WARNING,
+                              ERROR, and CRITICAL logging levels).
+  --log <path>                Path to a verbose appending log.
+  --no-input                  Disable prompting for input.
+  --proxy <proxy>             Specify a proxy in the form
+                              [user:passwd@]proxy.server:port.
+  --retries <retries>         Maximum number of retries each connection should
+                              attempt (default 5 times).
+  --timeout <sec>             Set the socket timeout (default 15 seconds).
+  --exists-action <action>    Default action when a path already exists:
+                              (s)witch, (i)gnore, (w)ipe, (b)ackup, (a)bort.
+  --trusted-host <hostname>   Mark this host or host:port pair as trusted,
+                              even though it does not have valid or any HTTPS.
+  --cert <path>               Path to alternate CA bundle.
+  --client-cert <path>        Path to SSL client certificate, a single file
+                              containing the private key and the certificate
+                              in PEM format.
+  --cache-dir <dir>           Store the cache data in <dir>.
+  --no-cache-dir              Disable the cache.
+  --disable-pip-version-check
+                              Don't periodically check PyPI to determine
+                              whether a new version of pip is available for
+                              download. Implied with --no-index.
+  --no-color                  Suppress colored output.
+  --no-python-version-warning
+                              Silence deprecation warnings for upcoming
+                              unsupported Pythons.
+  --use-feature <feature>     Enable new functionality, that may be backward
+                              incompatible.
+  --use-deprecated <feature>  Enable deprecated functionality, that will be
+                              removed in the future.
+pi@raspberrypi:~ $ python -m pip install filterpy
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting filterpy
+  Downloading https://www.piwheels.org/simple/filterpy/filterpy-1.4.5-py3-none-any.whl (109 kB)
+     |████████████████████████████████| 109 kB 163 kB/s 
+Collecting scipy
+  Downloading https://www.piwheels.org/simple/scipy/scipy-1.8.0-cp39-cp39-linux_armv7l.whl (72.0 MB)
+     |████████████████████████████████| 72.0 MB 846 bytes/s 
+Requirement already satisfied: numpy in /usr/lib/python3/dist-packages (from filterpy) (1.19.5)
+Collecting matplotlib
+  Downloading https://www.piwheels.org/simple/matplotlib/matplotlib-3.5.1-cp39-cp39-linux_armv7l.whl (10.7 MB)
+     |████████████████████████████████| 10.7 MB 91 kB/s 
+Collecting python-dateutil>=2.7
+  Downloading https://www.piwheels.org/simple/python-dateutil/python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+     |████████████████████████████████| 247 kB 1.9 MB/s 
+Collecting cycler>=0.10
+  Downloading https://www.piwheels.org/simple/cycler/cycler-0.11.0-py3-none-any.whl (6.4 kB)
+Requirement already satisfied: pillow>=6.2.0 in /usr/lib/python3/dist-packages (from matplotlib->filterpy) (8.1.2)
+Collecting fonttools>=4.22.0
+  Downloading https://www.piwheels.org/simple/fonttools/fonttools-4.33.3-cp39-cp39-linux_armv7l.whl (1.3 MB)
+     |████████████████████████████████| 1.3 MB 360 kB/s 
+Collecting packaging>=20.0
+  Downloading https://www.piwheels.org/simple/packaging/packaging-21.3-py3-none-any.whl (40 kB)
+     |████████████████████████████████| 40 kB 1.0 MB/s 
+Collecting kiwisolver>=1.0.1
+  Downloading kiwisolver-1.4.2.tar.gz (96 kB)
+     |████████████████████████████████| 96 kB 797 kB/s 
+  Installing build dependencies ... done
+  Getting requirements to build wheel ... done
+    Preparing wheel metadata ... done
+Collecting pyparsing>=2.2.1
+  Using cached https://www.piwheels.org/simple/pyparsing/pyparsing-3.0.8-py3-none-any.whl (98 kB)
+Requirement already satisfied: six>=1.5 in /usr/lib/python3/dist-packages (from python-dateutil>=2.7->matplotlib->filterpy) (1.16.0)
+Building wheels for collected packages: kiwisolver
+  Building wheel for kiwisolver (PEP 517) ... done
+  Created wheel for kiwisolver: filename=kiwisolver-1.4.2-cp39-cp39-linux_armv7l.whl size=1061184 sha256=18742adf4f126f2127c4cc918ab432889237338f80daa204038b5253570bbc7c
+  Stored in directory: /home/pi/.cache/pip/wheels/24/ce/a4/af7a126e2ac3a4397f4da0815c6b714f2706248304977852de
+Successfully built kiwisolver
+Installing collected packages: pyparsing, python-dateutil, packaging, kiwisolver, fonttools, cycler, scipy, matplotlib, filterpy
+  WARNING: The scripts fonttools, pyftmerge, pyftsubset and ttx are installed in '/home/pi/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed cycler-0.11.0 filterpy-1.4.5 fonttools-4.33.3 kiwisolver-1.4.2 matplotlib-3.5.1 packaging-21.3 pyparsing-3.0.8 python-dateutil-2.8.2 scipy-1.8.0
+pi@raspberrypi:~ $ python -m pip install tflite-runtime
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting tflite-runtime
+  Downloading tflite_runtime-2.8.0-cp39-cp39-manylinux2014_armv7l.whl (1.8 MB)
+     |████████████████████████████████| 1.8 MB 2.7 MB/s 
+Requirement already satisfied: numpy>=1.19.2 in /usr/lib/python3/dist-packages (from tflite-runtime) (1.19.5)
+Installing collected packages: tflite-runtime
+Successfully installed tflite-runtime-2.8.0
+pi@raspberrypi:~ $ python -m pip install numpy
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Requirement already satisfied: numpy in /usr/lib/python3/dist-packages (1.19.5)
+pi@raspberrypi:~ $ python -m pip install scipy
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Requirement already satisfied: scipy in ./.local/lib/python3.9/site-packages (1.8.0)
+Requirement already satisfied: numpy<1.25.0,>=1.17.3 in /usr/lib/python3/dist-packages (from scipy) (1.19.5)
+pi@raspberrypi:~ $ python -m pip install python_speech_features
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting python_speech_features
+  Downloading https://www.piwheels.org/simple/python-speech-features/python_speech_features-0.6-py3-none-any.whl (6.6 kB)
+Installing collected packages: python-speech-features
+Successfully installed python-speech-features-0.6
+pi@raspberrypi:~ $ sudo apt-get install libportaudio2
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libfuse2
+Use 'sudo apt autoremove' to remove it.
+The following NEW packages will be installed:
+  libportaudio2
+0 upgraded, 1 newly installed, 0 to remove and 29 not upgraded.
+Need to get 57.5 kB of archives.
+After this operation, 189 kB of additional disk space will be used.
+Get:1 https://rpi.vietidc.com/raspbian bullseye/main armhf libportaudio2 armhf 19.6.0-1.1 [57.5 kB]
+Fetched 57.5 kB in 2s (28.6 kB/s)  
+Selecting previously unselected package libportaudio2:armhf.
+(Reading database ... 101510 files and directories currently installed.)
+Preparing to unpack .../libportaudio2_19.6.0-1.1_armhf.deb ...
+Unpacking libportaudio2:armhf (19.6.0-1.1) ...
+Setting up libportaudio2:armhf (19.6.0-1.1) ...
+Processing triggers for libc-bin (2.31-13+rpt2+rpi1+deb11u2) ...
+pi@raspberrypi:~ $ python -m pip install opencv-python
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting opencv-python
+  Downloading https://www.piwheels.org/simple/opencv-python/opencv_python-4.5.5.64-cp39-cp39-linux_armv7l.whl (11.2 MB)
+     |████████████████████████████████| 11.2 MB 1.6 MB/s 
+Requirement already satisfied: numpy>=1.19.3 in /usr/lib/python3/dist-packages (from opencv-python) (1.19.5)
+Installing collected packages: opencv-python
+Successfully installed opencv-python-4.5.5.64
+pi@raspberrypi:~ $ sudo apt-get install libcblas-dev
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Package libcblas-dev is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+However the following packages replace it:
+  libatlas-base-dev
+
+E: Package 'libcblas-dev' has no installation candidate
+pi@raspberrypi:~ $ sudo apt-get install libhdf5-dev
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libfuse2
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  hdf5-helpers libaec-dev libaec0 libhdf5-103-1 libhdf5-cpp-103-1
+  libhdf5-fortran-102 libhdf5-hl-100 libhdf5-hl-cpp-100 libhdf5-hl-fortran-100
+  libjpeg-dev libjpeg62-turbo-dev libsz2
+Suggested packages:
+  libhdf5-doc
+The following NEW packages will be installed:
+  hdf5-helpers libaec-dev libaec0 libhdf5-103-1 libhdf5-cpp-103-1 libhdf5-dev
+  libhdf5-fortran-102 libhdf5-hl-100 libhdf5-hl-cpp-100 libhdf5-hl-fortran-100
+  libjpeg-dev libjpeg62-turbo-dev libsz2
+0 upgraded, 13 newly installed, 0 to remove and 29 not upgraded.
+Need to get 4,152 kB of archives.
+After this operation, 14.7 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf hdf5-helpers armhf 1.10.6+repack-4+deb11u1 [40.5 kB]
+Get:2 https://rpi.vietidc.com/raspbian bullseye/main armhf libaec0 armhf 1.0.4-1 [20.0 kB]
+Get:3 https://rpi.vietidc.com/raspbian bullseye/main armhf libsz2 armhf 1.0.4-1 [6,664 B]
+Get:5 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-103-1 armhf 1.10.6+repack-4+deb11u1 [1,207 kB]
+Get:4 http://mirror.freedif.org/Raspbian/raspbian bullseye/main armhf libaec-dev armhf 1.0.4-1 [17.8 kB]
+Get:6 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-cpp-103-1 armhf 1.10.6+repack-4+deb11u1 [130 kB]
+Get:7 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-fortran-102 armhf 1.10.6+repack-4+deb11u1 [93.2 kB]
+Get:8 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-hl-100 armhf 1.10.6+repack-4+deb11u1 [79.6 kB]
+Get:9 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-hl-fortran-100 armhf 1.10.6+repack-4+deb11u1 [51.2 kB]
+Get:10 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-hl-cpp-100 armhf 1.10.6+repack-4+deb11u1 [37.4 kB]
+Get:11 https://rpi.vietidc.com/raspbian bullseye/main armhf libjpeg62-turbo-dev armhf 1:2.0.6-4 [240 kB]
+Get:12 https://rpi.vietidc.com/raspbian bullseye/main armhf libjpeg-dev armhf 1:2.0.6-4 [67.8 kB]
+Get:13 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libhdf5-dev armhf 1.10.6+repack-4+deb11u1 [2,161 kB]
+Fetched 4,152 kB in 10s (405 kB/s)                                             
+Selecting previously unselected package hdf5-helpers.
+(Reading database ... 101516 files and directories currently installed.)
+Preparing to unpack .../00-hdf5-helpers_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking hdf5-helpers (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libaec0:armhf.
+Preparing to unpack .../01-libaec0_1.0.4-1_armhf.deb ...
+Unpacking libaec0:armhf (1.0.4-1) ...
+Selecting previously unselected package libsz2:armhf.
+Preparing to unpack .../02-libsz2_1.0.4-1_armhf.deb ...
+Unpacking libsz2:armhf (1.0.4-1) ...
+Selecting previously unselected package libaec-dev:armhf.
+Preparing to unpack .../03-libaec-dev_1.0.4-1_armhf.deb ...
+Unpacking libaec-dev:armhf (1.0.4-1) ...
+Selecting previously unselected package libhdf5-103-1:armhf.
+Preparing to unpack .../04-libhdf5-103-1_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-103-1:armhf (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libhdf5-cpp-103-1:armhf.
+Preparing to unpack .../05-libhdf5-cpp-103-1_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-cpp-103-1:armhf (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libhdf5-fortran-102:armhf.
+Preparing to unpack .../06-libhdf5-fortran-102_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-fortran-102:armhf (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libhdf5-hl-100:armhf.
+Preparing to unpack .../07-libhdf5-hl-100_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-hl-100:armhf (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libhdf5-hl-fortran-100:armhf.
+Preparing to unpack .../08-libhdf5-hl-fortran-100_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-hl-fortran-100:armhf (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libhdf5-hl-cpp-100:armhf.
+Preparing to unpack .../09-libhdf5-hl-cpp-100_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-hl-cpp-100:armhf (1.10.6+repack-4+deb11u1) ...
+Selecting previously unselected package libjpeg62-turbo-dev:armhf.
+Preparing to unpack .../10-libjpeg62-turbo-dev_1%3a2.0.6-4_armhf.deb ...
+Unpacking libjpeg62-turbo-dev:armhf (1:2.0.6-4) ...
+Selecting previously unselected package libjpeg-dev:armhf.
+Preparing to unpack .../11-libjpeg-dev_1%3a2.0.6-4_armhf.deb ...
+Unpacking libjpeg-dev:armhf (1:2.0.6-4) ...
+Selecting previously unselected package libhdf5-dev.
+Preparing to unpack .../12-libhdf5-dev_1.10.6+repack-4+deb11u1_armhf.deb ...
+Unpacking libhdf5-dev (1.10.6+repack-4+deb11u1) ...
+Setting up hdf5-helpers (1.10.6+repack-4+deb11u1) ...
+Setting up libaec0:armhf (1.0.4-1) ...
+Setting up libjpeg62-turbo-dev:armhf (1:2.0.6-4) ...
+Setting up libsz2:armhf (1.0.4-1) ...
+Setting up libaec-dev:armhf (1.0.4-1) ...
+Setting up libjpeg-dev:armhf (1:2.0.6-4) ...
+Setting up libhdf5-103-1:armhf (1.10.6+repack-4+deb11u1) ...
+Setting up libhdf5-cpp-103-1:armhf (1.10.6+repack-4+deb11u1) ...
+Setting up libhdf5-hl-100:armhf (1.10.6+repack-4+deb11u1) ...
+Setting up libhdf5-hl-cpp-100:armhf (1.10.6+repack-4+deb11u1) ...
+Setting up libhdf5-fortran-102:armhf (1.10.6+repack-4+deb11u1) ...
+Setting up libhdf5-hl-fortran-100:armhf (1.10.6+repack-4+deb11u1) ...
+Setting up libhdf5-dev (1.10.6+repack-4+deb11u1) ...
+update-alternatives: using /usr/lib/arm-linux-gnueabihf/pkgconfig/hdf5-serial.pc to provide /usr/lib/arm-linux-gnueabihf/pkgconfig/hdf5.pc (hdf5.pc) in auto mode
+Processing triggers for man-db (2.9.4-2) ...
+Processing triggers for libc-bin (2.31-13+rpt2+rpi1+deb11u2) ...
+pi@raspberrypi:~ $ sudo apt-get install libhdf5-serial-dev
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Note, selecting 'libhdf5-dev' instead of 'libhdf5-serial-dev'
+libhdf5-dev is already the newest version (1.10.6+repack-4+deb11u1).
+The following package was automatically installed and is no longer required:
+  libfuse2
+Use 'sudo apt autoremove' to remove it.
+0 upgraded, 0 newly installed, 0 to remove and 29 not upgraded.
+pi@raspberrypi:~ $ sudo apt-get install libatlas-base-dev
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libfuse2
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  libatlas3-base
+Suggested packages:
+  libatlas-doc liblapack-doc
+The following NEW packages will be installed:
+  libatlas-base-dev libatlas3-base
+0 upgraded, 2 newly installed, 0 to remove and 29 not upgraded.
+Need to get 5,055 kB of archives.
+After this operation, 26.5 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libatlas3-base armhf 3.10.3-10+rpi1 [2,454 kB]
+Get:2 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libatlas-base-dev armhf 3.10.3-10+rpi1 [2,601 kB]
+Fetched 5,055 kB in 3s (1,543 kB/s)            
+Selecting previously unselected package libatlas3-base:armhf.
+(Reading database ... 101776 files and directories currently installed.)
+Preparing to unpack .../libatlas3-base_3.10.3-10+rpi1_armhf.deb ...
+Unpacking libatlas3-base:armhf (3.10.3-10+rpi1) ...
+Selecting previously unselected package libatlas-base-dev:armhf.
+Preparing to unpack .../libatlas-base-dev_3.10.3-10+rpi1_armhf.deb ...
+Unpacking libatlas-base-dev:armhf (3.10.3-10+rpi1) ...
+Setting up libatlas3-base:armhf (3.10.3-10+rpi1) ...
+update-alternatives: using /usr/lib/arm-linux-gnueabihf/atlas/libblas.so.3 to provide /usr/lib/arm-linux-gnueabihf/libblas.so.3 (libblas.so.3-arm-linux-gnueabihf) in auto mode
+update-alternatives: using /usr/lib/arm-linux-gnueabihf/atlas/liblapack.so.3 to provide /usr/lib/arm-linux-gnueabihf/liblapack.so.3 (liblapack.so.3-arm-linux-gnueabihf) in auto mode
+Setting up libatlas-base-dev:armhf (3.10.3-10+rpi1) ...
+update-alternatives: using /usr/lib/arm-linux-gnueabihf/atlas/libblas.so to provide /usr/lib/arm-linux-gnueabihf/libblas.so (libblas.so-arm-linux-gnueabihf) in auto mode
+update-alternatives: using /usr/lib/arm-linux-gnueabihf/atlas/liblapack.so to provide /usr/lib/arm-linux-gnueabihf/liblapack.so (liblapack.so-arm-linux-gnueabihf) in auto mode
+Processing triggers for libc-bin (2.31-13+rpt2+rpi1+deb11u2) ...
+pi@raspberrypi:~ $ sudo apt-get install libjasper-dev 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following package was automatically installed and is no longer required:
+  libfuse2
+Use 'sudo apt autoremove' to remove it.
+The following additional packages will be installed:
+  libjasper1
+Suggested packages:
+  libjasper-runtime
+The following NEW packages will be installed:
+  libjasper-dev libjasper1
+0 upgraded, 2 newly installed, 0 to remove and 29 not upgraded.
+Need to get 608 kB of archives.
+After this operation, 1,210 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libjasper1 armhf 1.900.1-debian1-2.4+deb8u1+b1 [109 kB]
+Get:2 http://raspbian.raspberrypi.org/raspbian bullseye/main armhf libjasper-dev armhf 1.900.1-debian1-2.4+deb8u1+b1 [499 kB]
+Fetched 608 kB in 2s (330 kB/s)        
+Selecting previously unselected package libjasper1:armhf.
+(Reading database ... 101974 files and directories currently installed.)
+Preparing to unpack .../libjasper1_1.900.1-debian1-2.4+deb8u1+b1_armhf.deb ...
+Unpacking libjasper1:armhf (1.900.1-debian1-2.4+deb8u1+b1) ...
+Selecting previously unselected package libjasper-dev.
+Preparing to unpack .../libjasper-dev_1.900.1-debian1-2.4+deb8u1+b1_armhf.deb ...
+Unpacking libjasper-dev (1.900.1-debian1-2.4+deb8u1+b1) ...
+Setting up libjasper1:armhf (1.900.1-debian1-2.4+deb8u1+b1) ...
+Setting up libjasper-dev (1.900.1-debian1-2.4+deb8u1+b1) ...
+Processing triggers for libc-bin (2.31-13+rpt2+rpi1+deb11u2) ...
+pi@raspberrypi:~ $ sudo apt-get install libqtgui4 
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Package libqtgui4 is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Package 'libqtgui4' has no installation candidate
+pi@raspberrypi:~ $ sudo apt-get install libqt4-test
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+E: Unable to locate package libqt4-test
+pi@raspberrypi:~ $ ls
+Bookshelf  Documents  Music     project  Templates
+Desktop    Downloads  Pictures  Public   Videos
+pi@raspberrypi:~ $ cd project
+pi@raspberrypi:~/project $ ls
+pi-l298n-dc-motor  sqlite  test  tflite-speech-recognition  uart
+pi@raspberrypi:~/project $ cd tflite-speech-recognition/
+pi@raspberrypi:~/project/tflite-speech-recognition $ sqlite3 pythonsqlite.db 
+SQLite version 3.34.1 2021-01-20 14:10:07
+Enter ".help" for usage hints.
+sqlite> select * from yes;
+sqlite> select * from no;
+sqlite> 
+
+pi@raspberrypi:~/project/tflite-speech-recognition $ python 04-rpi-tflite-audio-stream.py 
+Traceback (most recent call last):
+  File "/home/pi/project/tflite-speech-recognition/04-rpi-tflite-audio-stream.py", line 6, in <module>
+    import sounddevice as sd
+ModuleNotFoundError: No module named 'sounddevice'
+pi@raspberrypi:~/project/tflite-speech-recognition $ python -m pip install sounddevice
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Collecting sounddevice
+  Downloading https://www.piwheels.org/simple/sounddevice/sounddevice-0.4.4-py3-none-any.whl (33 kB)
+Collecting CFFI>=1.0
+  Downloading https://www.piwheels.org/simple/cffi/cffi-1.15.0-cp39-cp39-linux_armv7l.whl (369 kB)
+     |████████████████████████████████| 369 kB 164 kB/s 
+Collecting pycparser
+  Downloading https://www.piwheels.org/simple/pycparser/pycparser-2.21-py2.py3-none-any.whl (119 kB)
+     |████████████████████████████████| 119 kB 2.2 MB/s 
+Installing collected packages: pycparser, CFFI, sounddevice
+Successfully installed CFFI-1.15.0 pycparser-2.21 sounddevice-0.4.4
+pi@raspberrypi:~/project/tflite-speech-recognition $ python 04-rpi-tflite-audio-stream.py 
+RuntimeError: module compiled against API version 0xf but this version of numpy is 0xd
+Traceback (most recent call last):
+  File "/home/pi/project/tflite-speech-recognition/04-rpi-tflite-audio-stream.py", line 7, in <module>
+    from filterpy.kalman import KalmanFilter
+  File "/home/pi/.local/lib/python3.9/site-packages/filterpy/kalman/__init__.py", line 22, in <module>
+    from .EKF import *
+  File "/home/pi/.local/lib/python3.9/site-packages/filterpy/kalman/EKF.py", line 27, in <module>
+    import scipy.linalg as linalg
+  File "/home/pi/.local/lib/python3.9/site-packages/scipy/linalg/__init__.py", line 198, in <module>
+    from ._misc import *
+  File "/home/pi/.local/lib/python3.9/site-packages/scipy/linalg/_misc.py", line 3, in <module>
+    from .blas import get_blas_funcs
+  File "/home/pi/.local/lib/python3.9/site-packages/scipy/linalg/blas.py", line 213, in <module>
+    from scipy.linalg import _fblas
+ImportError: numpy.core.multiarray failed to import
+pi@raspberrypi:~/project/tflite-speech-recognition $ python -m pip install scipy
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Requirement already satisfied: scipy in /home/pi/.local/lib/python3.9/site-packages (1.8.0)
+pi@raspberrypi:~/project/tflite-speech-recognition $ python 04-rpi-tflite-audio-stream.py 
+RuntimeError: module compiled against API version 0xf but this version of numpy is 0xd
+Traceback (most recent call last):
+  File "/home/pi/project/tflite-speech-recognition/04-rpi-tflite-audio-stream.py", line 7, in <module>
+    from filterpy.kalman import KalmanFilter
+  File "/home/pi/.local/lib/python3.9/site-packages/filterpy/kalman/__init__.py", line 22, in <module>
+    from .EKF import *
+  File "/home/pi/.local/lib/python3.9/site-packages/filterpy/kalman/EKF.py", line 27, in <module>
+    import scipy.linalg as linalg
+  File "/home/pi/.local/lib/python3.9/site-packages/scipy/linalg/__init__.py", line 198, in <module>
+    from ._misc import *
+  File "/home/pi/.local/lib/python3.9/site-packages/scipy/linalg/_misc.py", line 3, in <module>
+    from .blas import get_blas_funcs
+  File "/home/pi/.local/lib/python3.9/site-packages/scipy/linalg/blas.py", line 213, in <module>
+    from scipy.linalg import _fblas
+ImportError: numpy.core.multiarray failed to import
+pi@raspberrypi:~/project/tflite-speech-recognition $ python -m pip install numpy --upgrade
+Looking in indexes: https://pypi.org/simple, https://www.piwheels.org/simple
+Requirement already satisfied: numpy in /usr/lib/python3/dist-packages (1.19.5)
+Collecting numpy
+  Downloading https://www.piwheels.org/simple/numpy/numpy-1.22.3-cp39-cp39-linux_armv7l.whl (12.9 MB)
+     |████████████████████████████████| 12.9 MB 38 kB/s 
+Installing collected packages: numpy
+  WARNING: The scripts f2py, f2py3 and f2py3.9 are installed in '/home/pi/.local/bin' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed numpy-1.22.3
+pi@raspberrypi:~/project/tflite-speech-recognition $ python 04-rpi-tflite-audio-stream.py 
+[{'name': 'serving_default_conv2d_3_input:0', 'index': 0, 'shape': array([ 1, 16, 16,  1]), 'shape_signature': array([-1, 16, 16,  1]), 'dtype': <class 'numpy.float32'>, 'quantization': (0.0, 0), 'quantization_parameters': {'scales': array([], dtype=float32), 'zero_points': array([], dtype=int32), 'quantized_dimension': 0}, 'sparsity_parameters': {}}]
+output_data:  [[0.56652486 0.05878642 0.0034914  0.00396511 0.01217028 0.93830454
+  0.02248803 0.06684253 0.663608   0.00264007]]
+output_data:  [[0.5996694  0.31356406 0.31790984 0.20284447 0.26313856 0.4625565
+  0.28341293 0.26044613 0.54785156 0.260762  ]]
+output_data:  [[0.54778075 0.29518872 0.31340158 0.23308647 0.29585737 0.5292443
+  0.25940454 0.27129537 0.47171137 0.26662174]]
+output_data:  [[0.58921164 0.29117283 0.40160677 0.24390265 0.28736156 0.37076086
+  0.3239824  0.25741127 0.5936112  0.3283201 ]]
+output_data:  [[0.51193863 0.4518596  0.3268488  0.20107275 0.33904174 0.3841704
+  0.19350043 0.2222428  0.43074602 0.39302063]]
+output_data:  [[0.0014005  0.74665064 0.34004724 0.26414382 0.04016891 0.13681474
+  0.00848281 0.8657441  0.06492171 0.75052416]]
+output_data:  [[0.14920294 0.82411945 0.22974429 0.2848096  0.21119067 0.15355548
+  0.05894291 0.21553087 0.2766288  0.7570842 ]]
+output_data:  [[0.5844608  0.3575884  0.34117693 0.23581973 0.3068409  0.45842257
+  0.27723527 0.2677477  0.51590884 0.32908505]]
+output_data:  [[0.61515135 0.2786833  0.3904637  0.25744304 0.30551502 0.41125584
+  0.33387762 0.26759267 0.52945495 0.29077998]]
+output_data:  [[0.5625202  0.3533905  0.39401928 0.2974195  0.31571028 0.4453371
+  0.3224018  0.32511106 0.501753   0.34102505]]
+output_data:  [[5.6442618e-04 9.3137968e-01 4.6524224e-01 2.8204119e-01 1.8658131e-02
+  1.7536163e-02 2.7891994e-03 7.3647696e-01 4.9126089e-02 8.8559711e-01]]
+output_data:  [[0.0056957  0.9879529  0.01610768 0.03269905 0.0916456  0.13735506
+  0.00276947 0.17746404 0.05583644 0.84998006]]
+yes
+output_data:  [[0.32409722 0.36390704 0.2380251  0.12987038 0.24468654 0.42025515
+  0.19766298 0.25422275 0.7041293  0.40502065]]
+output_data:  [[0.58403754 0.27864364 0.29900435 0.17948982 0.2711026  0.4868284
+  0.25834066 0.21549588 0.5334823  0.24105722]]
+output_data:  [[0.51640725 0.3728506  0.27839732 0.17585176 0.27712    0.47917262
+  0.23590305 0.23991635 0.54988575 0.30914173]]
+output_data:  [[0.54166067 0.34295523 0.31798512 0.19508535 0.3101992  0.48346654
+  0.2672511  0.25385517 0.529856   0.29494184]]
+output_data:  [[5.7748086e-05 9.0575576e-02 5.8970153e-03 1.8021438e-01 1.0224670e-02
+  9.7984838e-01 1.8223822e-03 9.9891150e-01 3.0480719e-01 5.9030056e-03]]
+go
+no
+output_data:  [[0.30871624 0.19741923 0.31608427 0.3390144  0.08010653 0.6229616
+  0.20763713 0.67523843 0.6517379  0.1143719 ]]
+output_data:  [[0.61061853 0.27902898 0.3317573  0.22721305 0.28783056 0.4789596
+  0.32143426 0.26880217 0.5320785  0.25700873]]
+output_data:  [[0.5531343  0.37894392 0.34651333 0.23498425 0.2891017  0.43338358
+  0.26695192 0.26588985 0.5228941  0.34621394]]
+output_data:  [[0.53649974 0.32972804 0.37900567 0.2218745  0.32049748 0.39850265
+  0.3042124  0.26170194 0.5883201  0.34175503]]
+output_data:  [[0.5807694  0.3490739  0.3413064  0.21302614 0.29470628 0.44345167
+  0.24891904 0.24218765 0.50490874 0.30271327]]
+output_data:  [[0.01877439 0.8389431  0.5309124  0.23971733 0.04490572 0.10671636
+  0.02717558 0.4708609  0.3258716  0.6144846 ]]
+output_data:  [[2.9450655e-04 9.9177235e-01 3.2580405e-02 1.8981427e-02 4.3039292e-02
+  3.2190770e-02 1.1328757e-03 3.8907290e-01 2.1489799e-02 8.7727785e-01]]
+yes
+output_data:  [[0.5542191  0.3262062  0.30965912 0.20782861 0.2965359  0.48894653
+  0.30854505 0.27478522 0.55841297 0.27655864]]
+output_data:  [[0.60944325 0.27776578 0.32063046 0.19945523 0.29731834 0.47279295
+  0.2754333  0.22123381 0.50792915 0.2493358 ]]
+output_data:  [[0.56277597 0.33729023 0.38980576 0.27671856 0.316686   0.4564851
+  0.26871932 0.2874105  0.44860166 0.32674012]]
+output_data:  [[0.5309178  0.1371023  0.40965337 0.3164273  0.293671   0.50036335
+  0.33161664 0.390863   0.47380513 0.21039331]]
+output_data:  [[0.00500903 0.36037368 0.01194972 0.4884204  0.00922352 0.9307574
+  0.01578552 0.9810363  0.24573323 0.07205868]]
+no
+output_data:  [[0.5691179  0.31775415 0.32607922 0.20522982 0.26746443 0.4558657
+  0.30123043 0.25894165 0.5848516  0.27517593]]
+output_data:  [[0.5574033  0.3268303  0.32857665 0.25125283 0.33557385 0.48263675
+  0.22646973 0.27151406 0.39373162 0.3107549 ]]
+output_data:  [[0.47729748 0.45235452 0.32184058 0.23125732 0.22688285 0.42606178
+  0.2345244  0.2916394  0.55642724 0.38206017]]
+output_data:  [[0.0453811  0.21111691 0.09187654 0.4312293  0.03852043 0.8360862
+  0.10581037 0.8389406  0.5637736  0.07039356]]
+output_data:  [[0.0018279  0.19485104 0.00647897 0.5872104  0.01541626 0.94913936
+  0.03002411 0.98964584 0.11553383 0.03726366]]
+no
+output_data:  [[0.5980962  0.2965488  0.325392   0.22809845 0.2895756  0.5024474
+  0.31387478 0.27856472 0.53206706 0.25751948]]
+output_data:  [[0.5183106  0.35120845 0.27991542 0.18603995 0.2777894  0.49355403
+  0.2823811  0.27006507 0.55780184 0.2880733 ]]
+output_data:  [[0.61223    0.31961453 0.38598818 0.24939659 0.3248405  0.39699414
+  0.2860338  0.24121869 0.50407636 0.3329984 ]]
+^Coutput_data:  [[0.5621727  0.3819142  0.36909658 0.2558744  0.27769116 0.42071855
+  0.2773676  0.30826193 0.51263404 0.3465755 ]]
+Traceback (most recent call last):
+  File "/home/pi/project/tflite-speech-recognition/04-rpi-tflite-audio-stream.py", line 280, in <module>
+    pass
+KeyboardInterrupt
+
+pi@raspberrypi:~/project/tflite-speech-recognition $ sqlite3 pythonsqlite.db 
+SQLite version 3.34.1 2021-01-20 14:10:07
+Enter ".help" for usage hints.
+sqlite> select * from yes;
+1|2022-04-28 22:34:59
+2|2022-04-28 22:35:05
+sqlite> select * from no;
+1|2022-04-28 22:35:01
+2|2022-04-28 22:35:07
+3|2022-04-28 22:35:10
+sqlite> ^C
+
+pi@raspberrypi:~/project/tflite-speech-recognition $ 
+
