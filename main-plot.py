@@ -8,6 +8,7 @@
 
 # by Andrew D. Straw
 
+import zipapp
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -33,6 +34,7 @@ R = 0.1**2 # estimate of measurement variance, change to see effect
 # intial guesses
 xhat[0] = 0.0
 P[0] = 1.0
+result = np.zeros(sz)
 
 for k in range(1,n_iter):
     # time update
@@ -43,9 +45,10 @@ for k in range(1,n_iter):
     K[k] = Pminus[k]/( Pminus[k]+R )
     xhat[k] = xhatminus[k]+K[k]*(z[k]-xhatminus[k])
     P[k] = (1-K[k])*Pminus[k]
+    result[k] = z[k] - xhat[k]
 
 plt.figure()
-plt.plot(z,'k+',label='noisy measurements')
+plt.plot(result,'k+',label='noisy measurements')
 plt.plot(xhat,'b-',label='a posteri estimate')
 plt.axhline(x,color='g',label='truth value')
 plt.legend()
