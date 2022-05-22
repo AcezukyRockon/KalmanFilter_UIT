@@ -62,13 +62,7 @@ xhat[0] = 0.0
 P[0] = 1.0
 result = np.zeros(sz)
 
-#stm32 uart-------------------------------------------------------------------------------------------------------------------------------
-size = 8000 # array size
-temp_size = 0
-arr = np.zero(size) # declare numpy array
-ser = serial.Serial ("/dev/ttyS0", 115200)  	  # Open port with baud rate
-
-# Sliding window--------------------------------------------------------------------------------------------------------------------------
+# Sliding window--------------------------------------------------------
 window = np.zeros(int(rec_duration * resample_rate) * 2)
 
 # GPIO 
@@ -85,12 +79,12 @@ print(input_details)
 
 # Decimate (filter and downsample)
 def decimate(signal, old_fs, new_fs):
-    
+
     # Check to make sure we're downsampling
     if new_fs > old_fs:
         print("Error: target sample rate higher than original")
         return signal, old_fs
-    
+
     # We can only downsample by an integer factor
     dec_factor = old_fs / new_fs
     if not dec_factor.is_integer():
@@ -146,7 +140,7 @@ def update_time_go(conn, counter):
     cur.execute(sql, counter)
     conn.commit()
     return cur.lastrowid
-    
+
 #left
 def update_time_left(conn, counter):
     sql = ''' INSERT INTO left(id, d)
@@ -164,7 +158,7 @@ def update_time_right(conn, counter):
     cur.execute(sql, counter)
     conn.commit()
     return cur.lastrowid
-    
+
 #stop
 def update_time_stop(conn, counter):
     sql = ''' INSERT INTO stop(id, d)
@@ -181,32 +175,28 @@ def sd_callback(rec, frames, time, status):
 #    print('loop counter: --------------------------------------------------------------------------')
     # print('rec original: ',rec)
     # print("np shape rec: ", np.shape(rec))
-            
+
     # Start timing for testing
     start = timeit.default_timer()
-    
+
     # Notify if errors
     if status:
         print('Error:', status)
-    
+
     # Remove 2nd dimension from recording sample
     rec = np.squeeze(rec)
-    
+
     # Resample
-#    rec, new_fs = decimate(rec, sample_rate, resample_rate)
-    window = rec
-    print("np shape rec: "np.shape(rec))
-    print("np shape window: "np.shape(window))
-    new_fs = 8000
+    rec, new_fs = decimate(rec, sample_rate, resample_rate)
     # print('new rec and fs: ',rec,' ',new_fs)
 
     # Save recording onto sliding window
-#    window[:len(window)//2] = window[len(window)//2:]
-#    window[len(window)//2:] = rec
+    window[:len(window)//2] = window[len(window)//2:]
+    window[len(window)//2:] = rec
 #    print('window: ',window)
 #    print("type window: ", type(window))
 #    print("shape window: ", np.shape(window))
-    
+
     # kalman filter process
 #    window_kalman = np.zeros((np.shape(window)[0]))
 #    for i in range(np.shape(window)[0]):
@@ -304,7 +294,7 @@ def sd_callback(rec, frames, time, status):
 
     if debug_acc:
         print(val)
-    
+
     if debug_time:
         print(timeit.default_timer() - start)
 
@@ -314,13 +304,4 @@ with sd.InputStream(channels=num_channels,
                     blocksize=int(sample_rate * rec_duration),
                     callback=sd_callback):
     while True:
-        received_data = ser.read()                    # read serial port
-        sleep(0.03)
-        data_left = ser.inWaiting()                   # check for remaining byte
-        received_data += ser.read(data_left)
-        arr[temp_size] = float(received_data)     # append sample to numpy array
-        temp_size += 1
-        if(temp_size==size):		                  # if array size = 10, print, delete and recreate new array
-                print("shape arr: ", np.shape(arr))
-                sd_callback()
-                temp_size = 0
+        pass
