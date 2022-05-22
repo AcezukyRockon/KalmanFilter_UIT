@@ -62,7 +62,13 @@ xhat[0] = 0.0
 P[0] = 1.0
 result = np.zeros(sz)
 
-# Sliding window--------------------------------------------------------
+#stm32 uart-------------------------------------------------------------------------------------------------------------------------------
+size = 8000 # array size
+temp_size = 0
+arr = np.zero(size) # declare numpy array
+ser = serial.Serial ("/dev/ttyS0", 115200)  	  # Open port with baud rate
+
+# Sliding window--------------------------------------------------------------------------------------------------------------------------
 window = np.zeros(int(rec_duration * resample_rate) * 2)
 
 # GPIO 
@@ -187,12 +193,16 @@ def sd_callback(rec, frames, time, status):
     rec = np.squeeze(rec)
     
     # Resample
-    rec, new_fs = decimate(rec, sample_rate, resample_rate)
+#    rec, new_fs = decimate(rec, sample_rate, resample_rate)
+    window = rec
+    print("np shape rec: "np.shape(rec))
+    print("np shape window: "np.shape(window))
+    new_fs = 8000
     # print('new rec and fs: ',rec,' ',new_fs)
 
     # Save recording onto sliding window
-    window[:len(window)//2] = window[len(window)//2:]
-    window[len(window)//2:] = rec
+#    window[:len(window)//2] = window[len(window)//2:]
+#    window[len(window)//2:] = rec
 #    print('window: ',window)
 #    print("type window: ", type(window))
 #    print("shape window: ", np.shape(window))
@@ -304,4 +314,13 @@ with sd.InputStream(channels=num_channels,
                     blocksize=int(sample_rate * rec_duration),
                     callback=sd_callback):
     while True:
-        pass
+        received_data = ser.read()                    # read serial port
+        sleep(0.03)
+        data_left = ser.inWaiting()                   # check for remaining byte
+        received_data += ser.read(data_left)
+        arr[temp_size] = float(received_data)     # append sample to numpy array
+        temp_size += 1
+        if(temp_size==size):		                  # if array size = 10, print, delete and recreate new array
+                print("shape arr: ", np.shape(arr))
+                sd_callback()
+                temp_size = 0
