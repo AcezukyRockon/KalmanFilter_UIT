@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+
+  table
+    each value, key in data
+      tr
+        td #{key}
+        td #{value}
