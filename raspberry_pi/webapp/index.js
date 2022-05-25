@@ -29,10 +29,6 @@ router.get('/', function(req, res, next) {
          }],
          "applications":[
             {
-               "app_id":"5af56pi314-y1i96kdnqs871nih35",
-               "language":"es"
-            },
-            {
                "app_id":"5af56pi314-blvinpgn4c95ywyt8j",
                "language":"en"
             }
