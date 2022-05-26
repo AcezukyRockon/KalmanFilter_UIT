@@ -1,1 +1,14 @@
+https://www.digitalocean.com/community/tutorials/workflow-nodemon
+pi@raspberrypi:~/project/webapp $ DEBUG=myapp:* nodemon start --ext db
+
+https://stackoverflow.com/questions/47890565/dynamically-create-an-html-table-in-express-js
 https://itecnote.com/tecnote/node-js-how-to-create-a-table-using-pugjs-or-jade/
+http://dribbit.eu/nodejs/create-a-form-with-jade
+https://pugjs.org/language/iteration.html
+https://stackoverflow.com/questions/15968776/send-multiple-variables-through-render-with-express
+https://www.sqlitetutorial.net/sqlite-show-tables/
+https://stackoverflow.com/questions/14744984/jade-pug-if-else-condition-usage
+https://www.digitalocean.com/community/tutorials/workflow-nodemon
+https://stackoverflow.com/questions/25878660/render-array-in-jade
+GET/POST: https://www.geeksforgeeks.org/express-js-req-query-property/
+GET/POST: https://codeforgeek.com/handle-get-post-request-express-4/
