@@ -21,15 +21,11 @@ block content
   .container              
    table.table
       tr
-        th username
-        th customer
-        th language
-        th app_id
+        th id
+        th d
       tbody
-        each user in users
+        each i in values
           tr
-            td #{user.name}
-            td #{user.customer}
-            each application in applications
-              td #{application.language}
-              td #{application.app_id}
+            td #{i[0]}
+            td #{i[1]}
+
