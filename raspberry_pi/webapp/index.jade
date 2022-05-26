@@ -10,13 +10,23 @@ block content
         td #{key}
         td #{value}
 
-----------------------------------------------------
+working----------------------------------------------------
 
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  p Current table: #{title}
+  p List of available tables:
+  ul
+    each tb in list_tb.values
+      li #{tb[0]}
+      
+  form(name="add-estimation", method="get")
+    div.input
+      span.label Input table: 
+      input(type="text", name="title")
+    div.actions
+      input(type="submit", value="add")
 
   .container              
    table.table
@@ -24,8 +34,7 @@ block content
         th id
         th d
       tbody
-        each i in values
+        each i in data.values
           tr
             td #{i[0]}
             td #{i[1]}
-
