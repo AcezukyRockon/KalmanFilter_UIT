@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  p #{title}
+  p List of available tables:
+  ul
+    each tb in list_tb.values
+      li #{tb[0]}
+
+  form(name="add-estimation", method="get")
+    div.input
+      span.label Input table: 
+      input(type="text", name="title")
+    div.actions
+      input(type="submit", value="add")
