@@ -32,7 +32,7 @@ module.exports = router;
    };
   res.render('index', obj.accounts);
 
---------------------------------------------------------------------------------------------------------------------------------------------
+working--------------------------------------------------------------------------------------------------------------------------------------------
 
 var express = require('express');
 var router = express.Router();
@@ -45,38 +45,26 @@ const filebuffer = fs.readFileSync('/home/pi/project/webapp/pythonsqlite.db');
 router.get('/', function(req, res, next) {
   initSqlJs().then(function(SQL){
     // Load the db
-    var tb = "yes";
+    console.log(req.query.title);
+    var tb = req.query.title;
     const db = new SQL.Database(filebuffer);
-    const contents = db.exec("SELECT * FROM "+tb)
-    console.log(util.inspect(contents, false, null, true))
-    //console.log(contents[0].values);
     
-    var obj = contents;
-    res.render('index', obj[0]);
-  });
-  
-  
-  //console.log(obj);
-  /*var obj = [
-  {
-    columns: [ 'id', 'd' ],
-    values: [
-      [ 1, '2022-05-04 15:23:48' ],
-      [ 2, '2022-05-04 15:23:50' ],
-      [ 3, '2022-05-04 15:24:38' ],
-      [ 4, '2022-05-04 15:24:41' ],
-      [ 5, '2022-05-04 15:24:43' ],
-      [ 6, '2022-05-04 15:24:57' ],
-      [ 7, '2022-05-04 15:24:59' ],
-      [ 8, '2022-05-04 15:25:01' ]
-    ]
-  }
-];*/
+    if (tb == undefined) {
+      console.log("nothing to retrieve");
+      const list_tb = db.exec("SELECT name FROM sqlite_schema WHERE type='table';")
+      res.render('index-notable',{title : 'No table chosen', list_tb: list_tb[0]});
+    }
+    else {
+      const list_tb = db.exec("SELECT name FROM sqlite_schema WHERE type='table';")
+      const contents = db.exec("SELECT * FROM "+tb)
+      console.log(util.inspect(contents, false, null, true))
+      //console.log(contents[0].values);
+      
+      var obj = contents;
+      res.render('index', {title : tb, list_tb: list_tb[0], data: obj[0]});
+    }
 
-  //res.render('index', obj[0]);
-  //res.render('index', { data: obj });
-  
+  });
 });
 
 module.exports = router;
-
